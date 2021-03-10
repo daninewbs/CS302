@@ -1,6 +1,6 @@
 package ClosestSchools;
 /*
-* Author: 
+* Author: Danielle Newberry
 * Implements the closest pair of points recursive algorithm
 * on locations of K-12 schools in Vermont obtained from http://geodata.vermont.gov/datasets/vt-school-locations-k-12
 
@@ -116,8 +116,6 @@ public class Main {
 
 		//find middle pt by X coord
 		int mid = sLx.size()/2;
-		School middleY = sLx.get(mid);
-		//School middleX = sLy[mid];
 		
 		//Divide into L and R
 		//https://beginnersbook.com/2013/12/how-to-get-sublist-of-an-arraylist-with-example/
@@ -130,19 +128,17 @@ public class Main {
 		//set delta 
 		closestPair = minDist(left, right);
 		double delta = dist(closestPair[0],closestPair[1]);
-		System.out.println(delta +"with schools of" +closestPair[0] +" and "+closestPair[1] );
+		//System.out.println(delta +"with schools of" +closestPair[0] +" and "+closestPair[1] );
 
-		//create array of schools nearby
-		//sort by y second input
+		//sort via y pos
 		Collections.sort(sLy, new SortbyY());
-		//sort sort via y pos
+		
+		//create array of schools nearby
+		ArrayList<School> nearSchools = new ArrayList<School> (sLy.size()); 
 		//find all pair smaller than delta
-		ArrayList<School> nearSchools = new ArrayList<School> (sLy.size());
-		//int j = 0;  
 	    for (int i = 0; i < sLy.size(); i++)  {
-	        if (Math.abs(sLy.get(i).xpos - middleY.xpos) < delta) {
+	        if (Math.abs(sLy.get(i).xpos - sLy.get(mid).xpos) < delta) {
 	            nearSchools.add(sLy.get(i));
-				//j++;
 	        }
 	    }
 		
@@ -150,9 +146,9 @@ public class Main {
 	    //set delta to smallest
 	    for (int i = 0; i < nearSchools.size(); ++i){
 			int check = 7;
+			//make sure only check next 7 if their are at least 7 more
 			if(nearSchools.size()-i < 7){
-				check = nearSchools.size()-i;//-1?
-				//System.out.println(check);
+				check = nearSchools.size()-i;
 			}
 	        for (int k = 1; k < check; k++) {
 				if(dist(nearSchools.get(i),nearSchools.get(i+k))<delta){
@@ -163,7 +159,6 @@ public class Main {
 			}
 		}
 				
-		
 
 		return closestPair;
 
