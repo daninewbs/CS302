@@ -54,7 +54,7 @@ public class Main {
 		cp = ClosestPoints(Xsorted,Ysorted);
 		if(cp[0]!=null)
 			System.out.println("The two closest schools are "+ cp[0].name + " and " + cp[1].name +".");
-			System.out.println("with distance of: "+ dist(cp[0],cp[1]));
+			//System.out.println("with distance of: "+ dist(cp[0],cp[1]));
 		
 
 	}
@@ -62,9 +62,9 @@ public class Main {
 	//helper function for finising min distance between 2 sets of 2 schools
 	public static School[] minDist(School[] a, School[] b) {
 		School[] closestPair = new School[2];
-		double distA = Math.sqrt( Math.pow((a[0].xpos - a[1].xpos), 2) +  Math.pow((a[0].ypos - a[1].ypos), 2));
-		double distB = Math.sqrt( Math.pow((b[0].xpos - b[1].xpos), 2) +  Math.pow((b[0].ypos - b[1].ypos), 2));
-		
+		double distA = dist(a[0], a[1]);
+		double distB = dist(b[0], b[1]);
+
 		if (Math.min(distA, distB) == distA) {
 			closestPair[0] = a[0];
 			closestPair[1] = a[1];
