@@ -1,0 +1,167 @@
+/*
+* Author: Danielle Newberry
+# hours worked: 6 and counting...
+* Implements Huffman's binary encoding algorithm
+*/
+
+
+
+import java.io.IOException;
+import java.util.*;
+
+class Letter{
+	char c;
+	int freq;
+    String code;
+    Letter right;
+    Letter left;
+	
+	Letter(char l, int n){
+		c = l;
+		freq = n;
+        code = "";
+        right = null;
+        left = null;
+	}
+    Letter(char l, int n, Letter a, Letter b){
+		c = l;
+		freq = n;
+        code = "";
+        right = a;
+        left = b;
+	}
+    public char getL(){
+		return c;
+	}
+    public int getF(){
+		return freq;
+	}
+    public void setCode(String c){
+		code = c;
+	}
+    public String getCode(){
+		return code;
+	}
+}
+
+
+public class Huffman {
+
+
+	public static void main(String[] args) throws IOException{
+
+		//Runs encode
+        /*Letter l = new Letter('A', 4);
+        l.setCode("10101");
+        System.out.println(l.getCode());
+        l.setCode(l.getCode() + "10101");
+        System.out.println(l.getCode());*/
+		System.out.println(encode("Hello World!"));
+		
+
+	}
+    public static PriorityQueue<Letter> frequency(String message){
+        // https://stackoverflow.com/questions/6712587/how-to-count-frequency-of-characters-in-a-string
+        HashMap<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < message.length(); i++) {
+            char c = message.charAt(i);
+            
+            if (map.get(c)!= null) {
+                map.put(c, map.get(c) + 1);
+            }
+            else {
+                map.put(c, 1);
+            }
+        }
+        //now put the letters in heap, by using their freq
+        //https://leetcode.com/problems/top-k-frequent-words/discuss/179267/hashmap-and-priorityqueue-easy-to-understand-commented-code
+		PriorityQueue<Letter> sortedmap = new PriorityQueue<Letter>(new Comparator<Letter>(){
+
+			public int compare(Letter l1, Letter l2){
+                //so that the queue is ordered by least frequent highest up
+				if(l1.freq>l2.freq){
+					return 1;
+				}else {
+					return -1;
+				}
+			}
+		});
+        for(char s:map.keySet()){
+			Letter l = new Letter(s, map.get(s));
+			sortedmap.add(l);
+		}
+        
+        return sortedmap;
+    } 
+
+    //go through tree and store assigned values in hashmap
+    public static HashMap<Character, String>  traverseTree(Letter current, String currentCode){
+        HashMap<Character, String> map = new HashMap<>();
+        //while (current.right!= null || current.left!= null){
+            
+            if (current.right!= null){
+                String rightCode = currentCode +"1";
+                //System.out.println(current.getCode());
+                current.right.setCode(rightCode);
+                //System.out.println("code" + current.getCode());
+                traverseTree(current.right, rightCode);
+            }
+            if (current.left!= null){
+                String LeftCode = currentCode +"0";
+                current.left.setCode(LeftCode);
+                //System.out.println("code" + current.getCode());
+                traverseTree(current.left, LeftCode);
+            }
+            
+            if(current.c!= '\0'){
+                System.out.println(current.getL()+ " : " +current.getCode());
+                map.put(current.getL(), current.getCode());
+            }
+        //}
+        //assign binary values by iterating through tree
+        return map;
+    }
+
+	public static String encode(String originalMessage){
+
+        PriorityQueue<Letter> message  = frequency(originalMessage);
+		// Uses Huffman's algorithm to encode message into binary
+    
+		// Also prints a dictionary.
+        //System.out.println((frequency(message)).peek().getL());
+        //go through priority queue and translate into a tree
+        Letter l;
+        while (message.size() > 1){//want to be left withone item left in list
+             //System.out.println("here: line 124");
+            Letter right = message.poll();
+            if (!message.isEmpty()){
+                Letter left = message.poll();
+                l = new Letter('\0', 0, right, left);
+            }
+            else{
+                l = new Letter('\0', 0, right, null);
+            }
+            message.add(l);
+
+            //map.put(current.getL(), current.getCode())
+
+            
+        }
+        HashMap<Character, String> map = traverseTree(message.peek(), "");
+        String encodedM ="";
+        for (char a:originalMessage.toCharArray()){
+            System.out.println(map.containsValue('H'));
+            encodedM += map.get(a);
+        }
+
+        
+		return encodedM;
+
+
+
+
+	}
+
+	
+
+}
