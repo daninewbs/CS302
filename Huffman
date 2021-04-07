@@ -1,6 +1,6 @@
 /*
 * Author: Danielle Newberry
-# hours worked: 6 and counting...
+# hours worked: 8 and counting...
 * Implements Huffman's binary encoding algorithm
 */
 
@@ -50,13 +50,8 @@ public class Huffman {
 
 	public static void main(String[] args) throws IOException{
 
-		//Runs encode
-        /*Letter l = new Letter('A', 4);
-        l.setCode("10101");
-        System.out.println(l.getCode());
-        l.setCode(l.getCode() + "10101");
-        System.out.println(l.getCode());*/
-		System.out.println(encode("Hello World!"));
+		
+		System.out.println(encode("Danielle is awesome lots of lethkjhkhkjhkhkjhkjhkjhkhkhkhkhkjbmnbmbbnmbmters"));
 		
 
 	}
@@ -95,8 +90,8 @@ public class Huffman {
     } 
 
     //go through tree and store assigned values in hashmap
-    public static HashMap<Character, String>  traverseTree(Letter current, String currentCode){
-        HashMap<Character, String> map = new HashMap<>();
+    public static HashMap<Character, String>  traverseTree(Letter current, String currentCode, HashMap<Character, String> map){
+        //HashMap<Character, String> map = new HashMap<>();
         //while (current.right!= null || current.left!= null){
             
             if (current.right!= null){
@@ -104,13 +99,13 @@ public class Huffman {
                 //System.out.println(current.getCode());
                 current.right.setCode(rightCode);
                 //System.out.println("code" + current.getCode());
-                traverseTree(current.right, rightCode);
+                traverseTree(current.right, rightCode, map);
             }
             if (current.left!= null){
                 String LeftCode = currentCode +"0";
                 current.left.setCode(LeftCode);
                 //System.out.println("code" + current.getCode());
-                traverseTree(current.left, LeftCode);
+                traverseTree(current.left, LeftCode, map);
             }
             
             if(current.c!= '\0'){
@@ -147,10 +142,10 @@ public class Huffman {
 
             
         }
-        HashMap<Character, String> map = traverseTree(message.peek(), "");
+        HashMap<Character, String> map = new HashMap<>();
+        map = traverseTree(message.peek(), "", map );
         String encodedM ="";
         for (char a:originalMessage.toCharArray()){
-            System.out.println(map.containsValue('H'));
             encodedM += map.get(a);
         }
 
