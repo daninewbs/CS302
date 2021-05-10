@@ -100,52 +100,34 @@ public class Graph {
     public Double[][] ShortestDistance(Integer startNode){
     	// This method should create the array storing the objective function values of subproblems used in Bellman Ford.
 
-    	//You need to write this method!!
 		int edges = this.getAdjList().size();
-		int vertices = this.getDict().size();
+		//int vertices = this.getDict().size();
 		
-		Integer start = this.getDict().get(startNode);
-		
-		
-		Double[][] dpArray=new Double[vertices][vertices];
+			
+		Double[][] dpArray=new Double[edges][edges];
 		//initialize distances to infinity
-		for (int i = 0; i < vertices; i++) {
-			for (int j = 0; j < vertices; j++) {
-				dpArray[i][j]= max;
-			}
+		for (Integer key: this.getAdjList().keySet()) {
+				dpArray[this.getDict().get(key)][0]= max;
 		}
+
+		Integer start = this.getDict().get(startNode);
 		//distance to get to yourself is 0
-		dpArray[0][start] = Double.valueOf(0);
+		dpArray[start][0] = Double.valueOf(0);
 
 
-		for (int i = 1; i < vertices-1; i++) {
-		
-		//System.out.println(" adjList " + this.getAdjList());
-		//System.out.println(" node " + this.getDict());
-				
-			int v = 0;
-			for (Integer key: this.getDict().keySet()) {
-				int u = 0;
+		for (int i = 1; i < edges; i++) {
+	
+			for (Integer key: this.getAdjList().keySet()) {
+				dpArray[this.getDict().get(key)][i] = dpArray[this.getDict().get(key)][i-1];
 				//find min among options
 				for (Road path: adjList.get(key) ){
-					if (dpArray[u][i-1]+ path.getMiles() < dpArray[v][i]){
-						dpArray[v][i] = dpArray[u][i-1]+ path.getMiles();
-						//System.out.println("happening" );
+					if (dpArray[this.getDict().get(path.getEnd())][i-1]+ path.getMiles() < dpArray[this.getDict().get(key)][i]){
+						dpArray[this.getDict().get(key)][i] = dpArray[this.getDict().get(path.getEnd())][i-1]+ path.getMiles();
 					}
-					u++;
 				}
-				v++;
 			}
 			
 		}
-		//LOOK for negative cycles???
-
-		/*for (int i = 0; i < vertices; i++) {
-			System.out.println("");
-			for (int j = 0; j < vertices; j++) {
-				System.out.print(dpArray[i][j] + " ");
-			}
-		}*/
 
 		return dpArray;
     }
@@ -154,62 +136,36 @@ public class Graph {
 		// This method should work backwards through the array you created in ShortestDistance and output the 
 		// sequence of streets you should take to get from your starting point to your ending point.
 
-		// You need to write this method!!
-		//int currentNode = this.getDict().get(endNode);
+		
 		//System.out.println(this.getDict().get(endNode));
-		/*if (dpArray[0][currentNode] == 0){
-			System.out.println("this.getDict().get(endNode)");
-			//at start node
-			return;
-		}*/
+		if (dpArray[this.getDict().get(endNode)][this.getAdjList().size()-1] == max){
+			System.out.println("No Path");
+		}
 		//get next node moving backwards in list
 
+		int v = endNode;
 		
-		/*ArrayList<Road> roadOptions = this.getAdjList().get(endNode);
-		for (int i = currentNode-1; i < 0; i--) {
-			for (Road option: roadOptions){
-				if (dpArray[i][currentNode] == option.getMiles() + dpArray[i][currentNode -1]){
-					//this road was used
-					ShortestPath(option.getStart(), dpArray);
-					System.out.println(option);
-					break;
+		for (int i = this.getAdjList().size()-1; i > 0; i--) {
+			int currentNode = this.getDict().get(v);
+			//make sure new node
+			if(dpArray[currentNode][i] != dpArray[currentNode][i-1]){ 
+				ArrayList<Road> roadOptions = this.getAdjList().get(v);
+				for (Road option: roadOptions){
+					//see if distance differnence is same as road length
+					if (dpArray[currentNode][i] == option.getMiles() + dpArray[this.getDict().get(option.getEnd())][i -1]){
+						//this road was used
+						v = option.getEnd();
+						System.out.println(option.toString());
+						break;
+					}
 				}
 			}
-		}*/
-		//INFINITE CYCLE
-		
-		//System.out.println(this.getAdjList().get(endNode));
-		Integer pastEnd = 0;
-		for (int i = this.getDict().size()-1; i > 1; i--) {
-				//see if previous entry is only path size smaller
-
-				//System.out.println("this should happen more");
-				
-				/*if(!pastEnd.equals(endNode)){
-					pastEnd = endNode;*/
-					int currentNode = this.getDict().get(endNode);
-					int u = currentNode;
-					for (Road path: this.getAdjList().get(endNode) ){
-						//check if this path was used to travel
-						//make sure end node ends the road and does not start
-						/*System.out.println (path.getMiles());
-						System.out.println("are they equal?");
-						System.out.println(dpArray[currentNode][i]- dpArray[u][i-1]);*/
-						if (dpArray[currentNode][i]- dpArray[u][i-1] == path.getMiles()){
-							System.out.println(path.toString());
-							//System.out.println(this.adjList.get(this.getDict().get(endNode)));
-							endNode = path.getStart();
-							//currentNode = path.getStart();
-							//currentNode = this.getDict().get(endNode);
-							//ShortestPath(path.getStart(), dpArray);
-							
-							break;
-						}	
-						u--;
-					}
-				//}
-				
+			
 		}
+		
+
+
+
 
 		System.out.println("You need to write some code!");
 	}			
